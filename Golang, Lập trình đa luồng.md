@@ -1,4 +1,4 @@
-# Golang, Lập trình đa luồng
+# Golang và lập trình đa luồng
 **Yêu cầu**
 1. Lý thuyết
 + Lịch sử ra đời
@@ -103,12 +103,15 @@ Go không dùng `try/catch` để bắt lỗi. Cú pháp bắt lỗi là hàm tr
 result, err := divide(10, 0)
 if err != nil {
 	fmt.Println("cannot divide:", err)
+	// panic("cannot run with 0")
 	return
 }
 fmt.Println(result)
 ```
 
-`nil` biểu thị không có lỗi. `panic` chỉ nên dùng cho trạng thái không thể phục hồi hoặc lỗi lập trình, không nên dùng thay cho lỗi nghiệp vụ.
+khi err = `nil` tức không có lỗi. 
+`panic` trạng thái chỉ chương trình không nên đươc tiếp tục. dừng luồng thực thi hiện tại và bắt đầu quá trình `panic propagation`.
+`panic` chỉ nên dùng cho trạng thái không thể phục hồi hoặc lỗi lập trình, không nên dùng thay cho lỗi nghiệp vụ.
 
 #### 4.4. For-loop
 
@@ -158,6 +161,8 @@ File `go.mod` chứa tên module và dependency. `go.sum` lưu checksum để x�
 - Tên export viết hoa chữ cái đầu: `UserService`, `ParseConfig`.
 - Tên không export viết thường chữ cái đầu: `userService`, `parseConfig`.
 - Ngoài ra, có những cách viết đặc thù cho từ viết tắt như `HTTPServer`, `userID`, `URL`.
+- Khác với python, không dùng underscore để nối từ
+- file đặt tên với prefix `_`, golang tự động bỏ qua (được xác định là source file)
 
 ### 5. Cấu trúc dữ liệu
 
@@ -198,20 +203,22 @@ package main
 
 import "fmt"
 
-func worker(result chan<- string) {
+func worker(result chan<- string) {  // tham số result có kiểu là chan<- string
 	result <- "worker finished"
 }
 
 func main() {
-	result := make(chan string)
-	go worker(result)
-	fmt.Println(<-result)
+	result := make(chan string)  
+	go worker(result)// nhận dữ liệu
+	fmt.Println(<-result) // lấy dữ liệu
 }
 ```
+![alt text](./images/image5.png)
 
-`chan<- string` chỉ cho phép gửi dữ liệu. Ngược lại, `<-chan string` chỉ cho phép nhận dữ liệu. Channel không có buffer sẽ chặn bên gửi cho đến khi có bên nhận.
+`chan<- string` chỉ cho phép gửi dữ liệu. 
+Ngược lại, `<-chan string` chỉ cho phép nhận dữ liệu. Channel không có buffer sẽ chặn bên gửi cho đến khi có bên nhận.
 
-Khi nhiều goroutine cùng truy cập dữ liệu thay đổi được, cần tránh data race. Có thể dùng `sync.WaitGroup` để chờ và `sync.Mutex` để bảo vệ dữ liệu dùng chung:
+Khi nhiều goroutine cùng truy cập, cần tránh data race. Có thể dùng `sync.WaitGroup` để chờ và `sync.Mutex` để bảo vệ dữ liệu dùng chung:
 
 ```go
 var (
@@ -259,6 +266,7 @@ go test -race ./...
    ```bash
    go version
    ```
+   ![alt text](./images/image.png)
 
 2. Cài VS Code và extension Go chính thức.
 3. Mở thư mục gốc của project trong VS Code.
@@ -271,6 +279,7 @@ go test -race ./...
    go test ./...
    gofmt -w .
    ```
+   ![Kết quả Chạy go run](./images/image-1.png)  
 
 ### 2. Bài tập theo từng mục
 
@@ -282,8 +291,10 @@ go test -race ./...
 - Viết một worker nhận số từ channel, bình phương số đó rồi gửi kết quả về.
 - Chạy `go test -race ./...` và quan sát một data race có chủ đích.
 
+> Kết quả thực hành 2 hàm sum, divide
+	![alt text](./images/image-2.png)  
+	![alt text](./images/image-3.png)
 ### 3. Ví dụ worker pool tối giản
-
 ```go
 package main
 

@@ -1,3 +1,3 @@
-module example.com/hello
+module vdt-vcs-be/go-apps
 
 go 1.25.0
