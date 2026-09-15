@@ -1,25 +1,34 @@
-# Golang và lập trình đa luồng
+# GOLANG VÀ LẬP TRÌNH ĐA LUỒNG
 **Yêu cầu**
 1. Lý thuyết
-+ Lịch sử ra đời
-+ So sánh điểm mạnh yếu của Golang so với các ngôn ngữ khác: Python, Javascript, Java, C++
-+ Golang được dùng để lập trình các ứng dụng như thế nào
-+ Function: Input (Variadic function), Output (Multiple return), Error / Exception handling
-+ For-loop
-+ Package, Import
-+ Go module
-+ Naming Convetion
-- Data structure
-- Multithreading
-- Common packages
+	+ Lịch sử ra đời
+	+ So sánh điểm mạnh yếu của Golang so với các ngôn ngữ khác: Python, Javascript, Java, C++
+	+ Golang được dùng để lập trình các ứng dụng như thế nào
+	+ Function: Input (Variadic function), Output (Multiple return), Error / Exception handling
+	+ For-loop
+	+ Package, Import
+	+ Go module
+	+ Naming Convetion
+		- Data structure
+		- Multithreading
+		- Common packages
 2. Thực hành
-- Setup môi trường lập trình đáp ứng nhiều project trên cùng 1 phiên IDE
-- Viết các example implement tương ứng với từng mục ở phần kiến thức"
+	- Setup môi trường lập trình đáp ứng nhiều project trên cùng 1 phiên IDE
+	- Viết các example implement tương ứng với từng mục ở phần kiến thức"
 
 ## Mục lục
 
 - [Lý thuyết](#lý-thuyết)
+	- [1. Lịch sử ra đời](#1-lịch-sử-ra-đời)
+	- [2. Điểm mạnh/yếu](#2-điểm-mạnhyếu)
+	- [3. Golang được dùng để lập trình các ứng dụng nào](#3-golang-được-dùng-để-lập-trình-các-ứng-dụng-nào)
+	- [4. Cú pháp (cơ bản, xử lý lỗi, module, naming convention,.. )](#4-cú-pháp)
+	- [5. Cấu trúc dữ liệu](#5-cấu-trúc-dữ-liệu)
+	- [6. Lập trình đa luồng](#6-lập-trình-đa-luồng)
+	- [7. Các package thường dùng - common package](#7-các-package-thường-dùng---common-package)
 - [Thực hành](#thực-hành)
+	- [1. Cài đặt môi trường](#1-cài-đặt-môi-trường)
+	- [2. Bài tập theo từng mục](#2-bài-tập-theo-từng-mục)
 
 ## Lý thuyết
 
@@ -45,52 +54,103 @@ Tối ưu trong xây dựng ứng dụng web, cli, microservices.
 
 > Golang không có ưu điểm với các tác vụ ứng dụng khoa học dữ liệu, không có hệ sịnh thái lâu đời, hạn chế khả năng kiểm soát phần cứng.
 
-### 3. Golang được dùng để lập trình các ứng dụng như thế nào
+### 3. Golang được dùng để lập trình các ứng dụng nào
 
 Go thường được dùng cho REST API, gRPC service (Google Remote Procedure Call), microservice, worker xử lý nền, proxy, gateway, web server, công cụ CLI, DevOps, cloud, container và các hệ thống mạng/lưu trữ.
+> Tại sao?
+GO nhanh, nhẹ, đơn giản, triển khai nhanh, hỗ trợ concurrency(đồng thời) tích hợp sẵn.
 
-Đối với các ngông ngữ khác:  
-- Frontend trình duyệt thường dùng JavaScript/TypeScript;
-- phân tích dữ liệu thường có lợi thế với Python;
-- phần mềm cần điều khiển phần cứng rất chi tiết có thể chọn C/C++ hoặc Rust.
+So với các ngôn ngữ khác:  
+- Frontend trình duyệt đa phần sử dụng JavaScript/TypeScript;
+- Phân tích dữ liệu lớn thường có lợi thế với Python;
+- Phần mềm cần điều khiển phần cứng rất chi tiết có thể chọn C/C++ hoặc Rust.
 
-### 4. Cú pháp cơ bản
+### 4. Cú pháp
 
 #### 4.1. Chương trình Golang cơ bản
 
+Cấu trúc chương trình, 1 file go lang cơ bản.
 ```go
+// Khai báo package
+// các file Go phải thuộc một package.
 package main
 
+// Khai báo các package bên ngoài được sử dụng.
 import "fmt"
 
+// function
 func main() {
 	message := "Hello world!"
 	fmt.Println(message)
+
+	SayHello()
+	sayGoodBye()
+	
+}
+
+// Golang cho phép function được khai báo bất kỳ thứ tự nào.
+
+// Exported function với tên bắt đầu bằng chữ hoa.
+// Có thể được sử dụng từ package khác.
+func SayHello() {
+	fmt.Println("Hello!")
+}
+
+// không export function tên bắt đầu bằng chữ thường.
+// -> sử dụng được trong cùng package.
+func sayGoodbye() {
+	fmt.Println("Goodbye!")
 }
 ```
 
 #### 4.2. Function: input, output và variadic function
 
 ```go
+// Function có input và output.
+// first, second có cùng kiểu int nên có thể viết gọn - khai báo 1 lần int.
 func add(first, second int) int {
 	return first + second
 }
 
+// Function có nhiều output.
+// Go thường sử dụng pattern (result, error) để trả về kết quả và lỗi.
 func divide(dividend, divisor float64) (float64, error) {
 	if divisor == 0 {
 		return 0, fmt.Errorf("divisor must not be zero")
 	}
-	return dividend / divisor, nil   
-    // Hàm có thể trả về nhiều giá trị, thường sử dụng pattern error.
+
+	return dividend / divisor, nil
 }
 
+// Variadic function: nhận số lượng argument không cố định.
+// numbers có kiểu []int bên trong function.
 func sum(numbers ...int) int {
 	total := 0
+
 	for _, number := range numbers {
 		total += number
 	}
+
 	return total
 }
+```
+Tổng quát, 1 function có dạng:
+```go
+
+func functionName(input parameters) output {
+    // function body
+}
+```
+> Chú ý: Trong Go, function là 1 giá trị, nên có thể
+```go
+func createAdder(x int) func(int) int {
+	return func(y int) int {
+		return x + y
+	}
+}
+
+add5 := createAdder(5) // tạo funtion với giá trị x = 5
+fmt.Println(add5(3)) // 8  - truyền y = 3
 ```
 
 
@@ -136,16 +196,18 @@ for index, name := range names {  // for với mảng
 
 #### 4.5. Package, import và Go module
 
-Package sử dụng để chia chương trình thành các phần có trách nhiệm riêng. Tên hàm, biến hoặc kiểu bắt đầu bằng chữ hoa sẽ được export để package khác sử dụng.
+Package sử dụng để chia chương trình thành các phần có nhiệm vụ riêng.  
+Tên hàm, biến hoặc kiểu bắt đầu bằng chữ hoa sẽ được export để package khác sử dụng.
 
 ```go
+// Ví dụ import package sử dụng bên ngoài package hiện tại.
 import (
 	"fmt"
 	"strings"
 )
 ```
 
-Tạo module:
+Tạo module bằng go mod
 
 ```bash
 go mod init example.com/hello
@@ -189,12 +251,26 @@ score, exists := scores["An"]
 
 ### 6. Lập trình đa luồng
 
-Trong Go, cần phân biệt:
+**Lập trình đa luồng**  
+1. Thread (luồng) là một đơn vị thực thi độc lập bên trong một process.  
+2. Concurrency và Parallelism:  
+	- Concurrency (đồng thời): nhiều task cùng được tiến hành, có thể luân phiên trên một CPU.
+	- Parallelism (song song): nhiều task thực sự chạy cùng lúc trên nhiều CPU core.
+3. Shared Data và Data Race
+4. Synchronization (Đồng hóa):
+	- Cơ chế kiểm soát thứ tự, quyền truy cập các thread.
+	- Một số cơ chế phổ biến:
+		- Mutex: chỉ cho một thread truy cập critical section tại một thời điểm.
+		- Semaphore: giới hạn số thread được truy cập resource đồng thời.
+		- WaitGroup: chờ nhiều thread/task hoàn thành.
+		- Channel: trao đổi dữ liệu và đồng bộ giữa các goroutine trong Go.
 
-- **Concurrency:** Đồng thời - các công công việc có thể tiến hành xen kẽ, không cùng lúc.
-- **Parallelism:** Song song - nhiều công việc thực sự chạy cùng lúc trên nhiều CPU.
-- **Goroutine:** hàm chạy **Đồng thời**, tạo bằng từ khóa `go`.
-- **Channel:** kênh để truyền dữ liệu và đồng bộ goroutine.
+**Lập trình đa luồng trong Go**  
+Trong Go, cần phân biệt:
+	- **Concurrency:** Đồng thời - các công công việc có thể tiến hành xen kẽ, không cùng lúc.
+	- **Parallelism:** Song song - nhiều công việc thực sự chạy cùng lúc trên nhiều CPU.
+	- **Goroutine:** hàm chạy **Đồng thời**, tạo bằng từ khóa `go`.
+	- **Channel:** kênh để truyền dữ liệu và đồng bộ goroutine.
 
 Ví dụ gửi kết quả qua channel:
 
@@ -219,32 +295,35 @@ func main() {
 Ngược lại, `<-chan string` chỉ cho phép nhận dữ liệu. Channel không có buffer sẽ chặn bên gửi cho đến khi có bên nhận.
 
 Khi nhiều goroutine cùng truy cập, cần tránh data race. Có thể dùng `sync.WaitGroup` để chờ và `sync.Mutex` để bảo vệ dữ liệu dùng chung:
-
 ```go
 var (
-	mu      sync.Mutex
-	counter int
+	// Mutex dùng để khóa vùng truy cập counter
+	mu      sync.Mutex 
+	// Biến dùng chung giữa các goroutine
+	counter int        
 )
 
 func increment(wg *sync.WaitGroup) {
-	defer wg.Done()
-	mu.Lock()
-	counter++
-	mu.Unlock()
+	// báo WaitGroup khi goroutine hoàn thành
+	defer wg.Done() 
+
+	// Khóa, không cho goroutine khác truy cập counter
+	mu.Lock()       
+	// Thay đổi dữ liệu dùng chung
+	counter++       
+	// Mở khóa
+	mu.Unlock()     
 }
 ```
+![alt text](images/image-6.png)  
+Vì vòng for tạo 10 goroutine, mỗi goroutine gọi increment() đúng 1 lần  
+Mutex đảm bảo tại một thời điểm chỉ một goroutine được thực hiện counter++, không xảy ra data race và kết quả là 10.
 
-Trong code thực tế, nên truyền `context.Context` để hủy công việc, đặt timeout cho I/O và kiểm tra race bằng:
-
-```bash
-go test -race ./...
-```
-
-### 7. Các package thường dùng
+### 7. Các package thường dùng - common package
 
 | Package | Mục đích |
 |---|---|
-| `fmt` | In ra màn hình chuỗi, format, đọc input |
+| `fmt` | (format) Log màn hình chuỗi, format, đọc input |
 | `strings` | package xử lý chuỗi |
 | `strconv` | Chuyển đổi chuỗi và số |
 | `errors` | Tạo và kiểm tra lỗi đơn giản |
@@ -268,9 +347,9 @@ go test -race ./...
    ```
    ![alt text](./images/image.png)
 
-2. Cài VS Code và extension Go chính thức.
+2. Cài VS Code, Go extension.
 3. Mở thư mục gốc của project trong VS Code.
-4. Tạo mỗi project Go trong một thư mục riêng, mỗi project có một file `go.mod`.
+4. Tạo project Go trong một thư mục riêng, một file `go.mod`.
 5. Mở nhiều project trong cùng một phiên VS Code bằng `File > Add Folder to Workspace...`, sau đó dùng `File > Save Workspace As...`.
 6. Chạy lệnh tại đúng thư mục chứa `go.mod`:
 
@@ -286,7 +365,9 @@ go test -race ./...
 - Viết hàm `sum(numbers ...int)` và kiểm thử với 0, 1 và nhiều tham số.
 - Viết hàm chia số trả về `(result, error)`, xử lý trường hợp chia cho 0.
 - Duyệt một slice và map bằng `for` và `range`.
-- Tạo package `mathutil`, export hàm `Max` và gọi từ package `main`.
+- Tạo package `mathutil`, export hàm `Max` và gọi từ package `main`.  
+> Kết quả thực hành  
+![alt text](images/image-7.png)
 - Tạo struct `User`, lưu nhiều user trong slice và tìm user theo ID.
 - Viết một worker nhận số từ channel, bình phương số đó rồi gửi kết quả về.
 - Chạy `go test -race ./...` và quan sát một data race có chủ đích.
@@ -294,44 +375,3 @@ go test -race ./...
 > Kết quả thực hành 2 hàm sum, divide
 	![alt text](./images/image-2.png)  
 	![alt text](./images/image-3.png)
-### 3. Ví dụ worker pool tối giản
-```go
-package main
-
-import (
-	"fmt"
-	"sync"
-)
-
-func worker(id int, jobs <-chan int, results chan<- int, wg *sync.WaitGroup) {
-	defer wg.Done()
-	for job := range jobs {
-		results <- job * job
-		fmt.Printf("worker %d processed %d\n", id, job)
-	}
-}
-
-func main() {
-	jobs := make(chan int, 4)
-	results := make(chan int, 4)
-	var wg sync.WaitGroup
-
-	for id := 1; id <= 2; id++ {
-		wg.Add(1)
-		go worker(id, jobs, results, &wg)
-	}
-
-	for job := 1; job <= 4; job++ {
-		jobs <- job
-	}
-	close(jobs)
-
-	wg.Wait()
-	close(results)
-	for result := range results {
-		fmt.Println("result:", result)
-	}
-}
-```
-
-`jobs` được đóng sau khi gửi xong công việc. Worker kết thúc khi `range jobs` nhận được tín hiệu channel đã đóng; `WaitGroup` bảo đảm tất cả worker hoàn thành trước khi đóng `results`.
